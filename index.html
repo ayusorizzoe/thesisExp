@@ -51,12 +51,13 @@ document.body.appendChild(renderer.domElement);
 scene.add(new THREE.HemisphereLight(0xffffff, 0x888888, 1.2));
 
 // flat ground
+const texLoader = new THREE.TextureLoader();
+const rockDiffuse = texLoader.load("textures/rockDif.png");
+
 const ground = new THREE.Mesh(
   new THREE.PlaneGeometry(200, 200),
-  new THREE.MeshStandardMaterial({ color: 0xaaaaaa })
+  new THREE.MeshStandardMaterial({ map: rockDiffuse })
 );
-ground.rotation.x = -Math.PI / 2;
-scene.add(ground);
 
 // controls
 const controls = new PointerLockControls(camera, document.body);
