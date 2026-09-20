@@ -55,7 +55,7 @@ const texLoader = new THREE.TextureLoader();
 const rockDiffuse = texLoader.load("textures/rockDif.png");
 rockDiffuse.colorSpace = THREE.SRGBColorSpace;
 rockDiffuse.wrapS = rockDiffuse.wrapT = THREE.RepeatWrapping;
-rockDiffuse.repeat.set(50, 50);   // tune this: bigger = smaller tiles
+rockDiffuse.repeat.set(20, 20);   // tune this: bigger = smaller tiles
 rockDiffuse.anisotropy = renderer.capabilities.getMaxAnisotropy(); // sharper at grazing angles
 
 // height function: given a position, returns how tall the ground is there
@@ -66,7 +66,7 @@ function getHeight(x, z) {
 }
 
 // plane with many vertices, rotated flat
-const groundGeo = new THREE.PlaneGeometry(200, 200, 128, 128);
+const groundGeo = new THREE.PlaneGeometry(200, 200, 32, 32);
 groundGeo.rotateX(-Math.PI / 2);
 
 // move each vertex up or down according to getHeight
@@ -79,9 +79,20 @@ groundGeo.computeVertexNormals();
 // the mesh, now using the bumpy geometry
 const ground = new THREE.Mesh(
   groundGeo,
-  new THREE.MeshStandardMaterial({ map: rockDiffuse })
+  new THREE.MeshLambertMaterial({ map: rockDiffuse, flatShading: true })
 );
 scene.add(ground);
+
+const raycaster = new THREE.Raycaster();
+const down = new THREE.Vector3(0, -1, 0);
+const rayOrigin = new THREE.Vector3();
+
+function groundHeightAt(x, z) {
+  rayOrigin.set(x, 100, z);
+  raycaster.set(rayOrigin, down);
+  const hit = raycaster.intersectObject(ground)[0];
+  return hit ? hit.point.y : 0;
+}
 
 // controls
 const controls = new PointerLockControls(camera, document.body);
@@ -137,8 +148,8 @@ function animate() {
   requestAnimationFrame(animate);
   const dt = Math.min(clock.getDelta(), 0.05);
   if (controls.isLocked) updateMovement(dt);
-  camera.position.y = getHeight(camera.position.x, camera.position.z) + 1.7;
-  renderer.render(scene, camera);
+camera.position.y = groundHeightAt(camera.position.x, camera.position.z) + 1.7;
+renderer.render(scene, camera);
 }
 animate();
 </script>
