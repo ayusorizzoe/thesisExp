@@ -58,11 +58,29 @@ rockDiffuse.wrapS = rockDiffuse.wrapT = THREE.RepeatWrapping;
 rockDiffuse.repeat.set(50, 50);   // tune this: bigger = smaller tiles
 rockDiffuse.anisotropy = renderer.capabilities.getMaxAnisotropy(); // sharper at grazing angles
 
+// height function: given a position, returns how tall the ground is there
+function getHeight(x, z) {
+  return Math.sin(x * 0.05) * 3
+       + Math.cos(z * 0.07) * 3
+       + Math.sin((x + z) * 0.12) * 1;
+}
+
+// plane with many vertices, rotated flat
+const groundGeo = new THREE.PlaneGeometry(200, 200, 128, 128);
+groundGeo.rotateX(-Math.PI / 2);
+
+// move each vertex up or down according to getHeight
+const pos = groundGeo.attributes.position;
+for (let i = 0; i < pos.count; i++) {
+  pos.setY(i, getHeight(pos.getX(i), pos.getZ(i)));
+}
+groundGeo.computeVertexNormals();
+
+// the mesh, now using the bumpy geometry
 const ground = new THREE.Mesh(
-  new THREE.PlaneGeometry(200, 200),
+  groundGeo,
   new THREE.MeshStandardMaterial({ map: rockDiffuse })
 );
-ground.rotation.x = -Math.PI / 2;
 scene.add(ground);
 
 // controls
@@ -119,6 +137,7 @@ function animate() {
   requestAnimationFrame(animate);
   const dt = Math.min(clock.getDelta(), 0.05);
   if (controls.isLocked) updateMovement(dt);
+  camera.position.y = getHeight(camera.position.x, camera.position.z) + 1.7;
   renderer.render(scene, camera);
 }
 animate();
