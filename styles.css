@@ -1,0 +1,87 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: #dddddd;
+}
+ 
+canvas {
+  display: block;
+}
+ 
+#info {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  font-family: monospace;
+  font-size: 13px;
+  color: #333;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 6px 10px;
+  border-radius: 4px;
+}
+ 
+/* crosshair so you know what you're pointing at in pointer-lock mode */
+#crosshair {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+ 
+#crosshair.active {
+  background: rgba(255, 220, 80, 0.95);
+  transform: scale(1.6);
+}
+ 
+/* small "click to read" hint, shown only when close + looking at the notebook */
+#interact-hint {
+  position: fixed;
+  top: calc(50% + 22px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: monospace;
+  font-size: 13px;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+}
+ 
+#interact-hint.visible {
+  opacity: 1;
+}
+ 
+/* the message panel that appears briefly when you click the notebook */
+#message-box {
+  position: fixed;
+  bottom: 14%;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  max-width: 420px;
+  font-family: monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #f5f0e6;
+  background: rgba(20, 18, 14, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 14px 18px;
+  border-radius: 6px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+ 
+#message-box.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
